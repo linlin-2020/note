@@ -38,3 +38,23 @@ public String getName(){
 ```
 原有的变量消失了，自然也无法获取到修改后的值。所以找到变量，就可获取到修改后的值。
 除此之外如果直接使用a.name,获取到的值还是Bob，还是因为内联优化。所以只有`System.out.println(field.get(a));`才可以获取到修改后的值。
+
+# 反射获取static静态变量
+
+已知静态变量是随着类的加载而初始化的，所以值跟类的实例化对象无关。故，反射获取修改都跟对象无关。
+```
+public class A{
+  public static String NAME="呵呵";
+  
+  public static void main(String[] args){
+    Field field=A.class.getDeclaredField("NAME");
+    field.setAccessible(true);
+    Object o=field.get(null);
+    System.out.println("修改前 "+o);
+    //输出：修改前 呵呵
+    field.set(null,"哈哈");
+    System.out.println("修改后 "+A.NAME);
+    //输出：修改后 哈哈
+  }
+}
+```
